@@ -10,6 +10,7 @@ from time import sleep
 
 logging.basicConfig(level=logging.INFO)
 
+# assume you fetched this already
 file_name = "main.html"
 
 class Statement(object):
@@ -42,18 +43,23 @@ class Statement(object):
         return "SID: %s, STMT_ID: %s, DATE: %s, Account: %s %s" % (self.sid, self.stmt_id, self.date, self.account, self.desc)
 
     def request_generate_pdf(self):
+        """
+        There is an unusual workflow where we first request that a PDF be
+        generated.  We name it by session ID and statement ID.  The response is
+        expected to be a redirect to a "waiting" page.   There is some polling
+        operation, that would then separately make a request to fetch the PDF.
+        """
         urlfmt = "https://estatements.centrue.com/rpweb.dll/GETPDF?SID=[%s]&STMID=%s"
         url = urlfmt % (self.sid, self.stmt_id)
         self.log.info("Fetcing url: %s", url)
         r = requests.get(url, allow_redirects=False)
         if (r.status_code == 302 and 'WAIT' in r.headers['Location']):
-            log.info("Generate success")
+            self.log.info("Generate success")
         else:
             raise(Exception("error"))
 
 
     def download_pdf(self):
-        log.info("Account is %s", self.account)
         self.request_generate_pdf()
 	sleep(5)
         urlfmt = "https://estatements.centrue.com/rpweb.dll/SHOWPDF?SID=[%s]"
@@ -62,7 +68,7 @@ class Statement(object):
 
         r = requests.get(url, allow_redirects=False)
         if (r.status_code == 200 and 'pdf' in r.headers['Content-Type']):
-            log.info("Download success")
+            self.log.info("Download success")
         else:
             raise(Exception("error"))
 
@@ -73,10 +79,21 @@ class Statement(object):
 
 
     def save_path(self):
+        """
+        Folder structure will be 
+
+            document type\
+                Account number\
+                    Date.pdf
+                    ...
+
+        Creates dirs as needed.  Returns path/filename relative to working dir.
+
+        """
         desc_string = self.desc.replace(" ", "_")
         path = os.path.join(desc_string, self.account)
 
-	log.info("creating path %s", path)
+	self.log.info("creating path %s", path)
 	try:
 	    os.makedirs(path)
 	except OSError as exc: 
