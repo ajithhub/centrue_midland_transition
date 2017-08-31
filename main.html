@@ -1,0 +1,329 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Language" content="en">
+	<link rel="stylesheet" type="text/css" href="../../css/centrue/rpweb.css">
+	<link rel="stylesheet" type="text/css" href="../../css/centrue/media.css">
+	<title>Centrue Bank E-Statements - My Statements</title>
+</head>
+
+<body>
+<script type="text/javascript" src="../../css/centrue/jquery.min.js"></script>
+
+<!-- start #page-wrap -->
+<div id="page-wrap">
+
+	<!-- start #header -->
+	<div id="header">
+		<a href="https://www.centrue.com" target="_blank"><img src="/images/centrue/centrue-logo.png"></a>
+    </div>
+	<!-- /end #header -->
+
+	<!-- start #nav -->
+	
+<div id="nav">
+	<div id="nav_left">
+		<ul><li>Hello, AJITH ANTONY</li></ul>
+	</div>
+	<div id="nav_right">
+		<ul><li><a class="" href="../../rpweb.dll/management?SID=[3384-2FAB3F6-0B8325]">User Maintenance</a></li><li><a class="currentpage" href="../../rpweb.dll/main?SID=[3384-2FAB3F6-0B8325]">My Statements</a></li>
+			<li><a class="" href="../../rpweb.dll/profile?SID=[3384-2FAB3F6-0B8325]">My Profile</a></li>
+			<li><a class="" href="../../rpweb.dll/help?SID=[3384-2FAB3F6-0B8325]">Help &amp; Contact Us</a></li>
+			<li><a class="" href="../../rpweb.dll/logout?SID=[3384-2FAB3F6-0B8325]">Logout</a></li>
+	
+		</ul>
+	</div>
+</div>
+	<!-- /end #nav -->
+
+	<div id="content-wrap" class="clearfix">
+
+	<!-- start #content -->
+	<div id="content" class="clearfix">
+
+		<!-- start #page-title -->
+	<div id="page-title">
+		<p class="BlueHeaderPageTitle">My Statements</p>
+	</div>
+	<!-- /end #page-title -->
+
+
+	<script language="javascript" type="text/javascript" src="../../css/centrue/datetimepicker.js"></script>
+	<script type="text/javascript" src="../../css/centrue/check_numbers.js"></script>
+	<script type="text/javascript" src="../../css/centrue/check_date.js"></script>
+	<script type="text/javascript">
+		
+	function SetSort(sortorder)
+	{
+		var sortint = parseInt(document.getElementById('SORT').value);
+		if (sortint==sortorder)
+		{
+			if (document.getElementById('AD').value=="A")
+			{
+				document.getElementById('AD').value="D";
+			}
+			else
+			{
+				document.getElementById('AD').value="A";
+			}	
+		} 
+		else
+		{
+			document.getElementById('AD').value="A";
+		}	
+		document.getElementById('SORT').value=sortorder;	
+		document.Selection.submit();
+	}
+		
+		function PayThisLine(lineid){
+			document.getElementById('PAYLINE').value=lineid;
+			if (document.getElementById(lineid).checked==true) {
+		  		document.getElementById('PAYTYPE').value='A';
+			}
+			else {
+		  		document.getElementById('PAYTYPE').value='D';
+			}  
+			document.Selection.submit();
+		}
+		function GetPDFFields(){
+			 var TmpFrm = document.getElementById('Selection');
+			 var Txtcnt = document.getElementById('LINECNT');
+			 var cnt = parseInt( Txtcnt.value)+1;
+			 var pdflist = ''; 
+			 var k=0;
+			 document.getElementById('PDFDOCS').value = ''
+			 for ( j = 1;  j <cnt;  j++)
+   			 {
+				
+   			 	var form_field = document.getElementById('pline'+j);
+				if (form_field) {
+				  var prsVal = form_field.value;
+				  if (form_field.checked == true)
+				  {
+					k=k+1;
+					pdflist=pdflist+'&doc'+k+'='+prsVal;
+				  }
+				}
+			    
+			 }
+			 pdflist = '&PDFCOUNT='+k+pdflist;
+  			 document.getElementById('PDFDOCS').value = pdflist;
+
+
+			}
+	function CompletePDF() {
+	    
+		GetPDFFields();
+		var pdflist = document.getElementById('PDFDOCS').value;
+		if (pdflist == '') {
+			alert('No Documents Selected');
+			return;
+		  }
+		var answer =confirm('PDF will be generated. \nTime to generated depends on Total Number of pages. \nClick OK to continue?'); 
+	    if (answer) {
+		  var pdfurl = "../../rpweb.dll/GETCOMBPDF?SID=[3384-2FAB3F6-0B8325]"+pdflist
+	      window.open(pdfurl,"_new");
+		}
+		}
+
+      function GetPayFields(){
+			 var TmpFrm = document.getElementById('Selection');
+			 var Txtcnt = document.getElementById('LINECNT');
+			 var cnt = parseInt( Txtcnt.value)+1;
+			 var PayList = ''; 
+			 for ( j = 1;  j <cnt;  j++)
+   			 {
+				
+   			 	var form_field = document.getElementById('line'+j);
+				if (form_field) {
+				 var prsVal = form_field.value;
+				 if (form_field.checked == true)
+				 {
+					PayList=PayList+prsVal+'=Y;';
+				 }
+				 else
+				 {
+					PayList=PayList+prsVal+'=N;';
+				 }
+				}
+			    
+			 }
+  			 document.getElementById('PAYDOCS').value = PayList;
+			 //alert(PayList);
+ 		 	 //document.getElementById('Total2').value = addCommas(duenowtotal.toFixed(2));
+
+			}
+	function FilterPaid() 
+	{
+		
+		document.getElementById('UNPAID').value='Y';
+		document.getElementById('COMPLETEPAY').value='N';
+		document.Selection.submit();
+	}
+	function CompletePayment() 
+	{
+		
+		
+		GetPayFields();
+		document.getElementById('COMPLETEPAY').value='Y';
+		document.Selection.submit();
+	}
+	function Search() 
+	{
+		document.getElementById('COMPLETEPAY').value='N';
+		
+		
+
+	  	var DocDate = document.getElementById('DocDate').value;
+		if (DocDate != "") {
+			if (!check_date(DocDate, "m/d/y")) {
+				alert("Invalid Date");
+				document.getElementById('DocDate').focus();
+				return false;
+			}
+		}		
+
+	  	var DocDate2 = document.getElementById('DocDate2').value;
+		if (DocDate2 != "") {
+			if (!check_date(DocDate2, "m/d/y")) {
+				alert("Invalid Date");
+				document.getElementById('DocDate2').focus();
+				return false;
+			}
+		}		
+	}
+	</script>
+<div class="ErrorMessage"></div>
+	
+	<p>
+	This is your Account Home page. It will show you all the information that is most important to you as soon as you sign in.<br>
+	In the <strong>Search</strong> section you will be able to search by Document Date for your statements and notices.<br> 
+	Simply enter your search terms in the boxes and click on "<b>Search</b>".<br>
+	</p>
+	<br>
+	<p>
+	All of the underlined information in the "<b>Select Document to view</b>" section will link to individual documents.<br>
+	</p>
+	
+	<form action="../../rpweb.dll/Main?SID=[3384-2FAB3F6-0B8325]" method="POST" name="Selection" id="Selection" target="_self" onSubmit="return Search();">
+		<input name="SID" id="SID" type="hidden" value="[3384-2FAB3F6-0B8325]">
+		<input name="CLID" id="CLID" type="hidden" value="213">
+		<input name="PAYLINE" id="PAYLINE" type="hidden" value="">
+		<input name="PAYTYPE" id="PAYTYPE" type="hidden" value="">
+		<input name="PAYDOCS" id="PAYDOCS" type="hidden" value="">
+		<input name="LINECNT" id="LINECNT" type="hidden" value="">
+		<input name="COMPLETEPAY" id="COMPLETEPAY" type="hidden" value="">
+		<input name="UNPAID" id="UNPAID" type="hidden" value="">
+		<input name="PDFDOCS" id="PDFDOCS" type="hidden" value="">
+		<input name="SORT" id="SORT" type="hidden" value="4">
+		<input name="AD" id="AD" type="hidden" value="D">
+		
+		<table>
+			<tr> 
+				<td class="BlackHeader"><i>Search by</i></td>
+				<td rowspan="100%" width="5"></td>
+				<td class="BlackHeader">From</td>
+				<td rowspan="100%" width="5"></td>
+				<td class="BlackHeader">To</td>
+			</tr>
+			<tr> 
+				<td>Document Date:</td>
+				<td>
+					<input name="DocDate" id="DocDate" type="text" size="15" maxlength="10" value="">
+					(mm/dd/yyyy)
+					<a href="javascript:NewCal('DocDate','mmddyyyy')">
+						<img src="../../images/centrue/cal.gif" width="18" height="18" border="0" alt="Pick a date">
+					</a>
+				</td>
+				<td>
+					<input name="DocDate2" id="DocDate2" type="text" size="15" maxlength="10" value="">
+					(mm/dd/yyyy)
+					<a href="javascript:NewCal('DocDate2','mmddyyyy')">
+						<img src="../../images/centrue/cal.gif" width="18" height="18" border="0" alt="Pick a date">
+					</a>
+				</td>
+			</tr>
+			<tr> 
+				<td></td>
+				<td>
+					<input type="submit" value="Search">
+					&nbsp;&nbsp;
+					<input type="reset" value="Clear">
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td colspan="100%">
+					<b>All Dates</b><br>
+					<b>Document Date Descending</b>
+				</td>
+			</tr>
+		</table>
+		
+		<table width="100%">
+			<tr>
+				<td class="BlackHeader">
+					Select Document to view:
+				</td>
+			</tr>
+		</table>
+		
+		<table width="100%">
+			<tr class="ResultsTr">
+				<th class="ResultsTh" align="left" onclick="SetSort(1)">Account #</th>
+				<th class="ResultsTh" align="left" onclick="SetSort(2)">Account Name</th>
+				<th class="ResultsTh" align="center" onclick="SetSort(3)">Document Type</th>
+				<th class="ResultsTh" align="center" onclick="SetSort(4)">Doc Date</th>
+			</tr>
+			<tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022409">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022409">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022409">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022409">08/21/2017</a></td></tr><tr class="SP_evenRows " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022496">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022496">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022496">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=202022496">08/21/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201900789">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201900789">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201900789">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201900789">07/31/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201904772">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201904772">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201904772">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=201904772">07/31/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846190">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846190">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846190">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846190">07/23/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846277">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846277">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846277">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=199846277">07/23/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198761158">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198761158">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198761158">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198761158">06/30/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198791838">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198791838">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198791838">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=198791838">06/30/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073403">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073403">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073403">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073403">06/20/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073491">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073491">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073491">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=197073491">06/20/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195053402">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195053402">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195053402">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195053402">05/31/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195099534">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195099534">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195099534">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=195099534">05/31/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149137">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149137">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149137">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149137">05/21/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149225">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149225">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149225">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=194149225">05/21/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192341083">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192341083">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192341083">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192341083">04/28/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192423145">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192423145">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192423145">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=192423145">04/28/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967320">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967320">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967320">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967320">04/20/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967409">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967409">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967409">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=189967409">04/20/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188429503">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188429503">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188429503">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188429503">03/31/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188432954">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188432954">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188432954">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=188432954">03/31/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959431">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959431">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959431">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959431">03/21/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959520">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959520">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959520">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186959520">03/21/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186003177">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186003177">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186003177">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186003177">02/28/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186022409">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186022409">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186022409">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=186022409">02/28/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492553">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492553">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492553">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492553">02/20/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492642">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492642">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492642">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185492642">02/20/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185369283">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185369283">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185369283">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185369283">01/31/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185376311">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185376311">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185376311">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185376311">01/31/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717384">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717384">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717384">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717384">01/22/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717474">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717474">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717474">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=182717474">01/22/2017</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259979">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259979">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259979">Centrue Tax Form 1098</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259979">01/01/2017</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259980">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259980">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259980">Centrue Tax Form 1098</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=185259980">01/01/2017</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179133558">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179133558">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179133558">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179133558">12/30/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179136168">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179136168">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179136168">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179136168">12/30/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026548">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026548">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026548">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026548">12/21/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026638">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026638">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026638">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=179026638">12/21/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178069103">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178069103">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178069103">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178069103">11/30/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178077622">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178077622">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178077622">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=178077622">11/30/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559638">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559638">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559638">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559638">11/20/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559728">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559728">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559728">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176559728">11/20/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713522">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713522">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713522">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713522">10/31/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724351">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724351">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724351">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724351">10/31/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190320">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190320">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190320">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190320">10/23/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190410">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190410">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190410">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=175190410">10/23/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713471">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713471">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713471">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176713471">09/30/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724466">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724466">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724466">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176724466">09/30/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851509">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851509">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851509">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851509">09/20/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851601">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851601">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851601">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171851601">09/20/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171126726">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171126726">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171126726">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171126726">08/31/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171134251">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171134251">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171134251">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=171134251">08/31/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385132">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385132">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385132">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385132">08/21/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385224">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385224">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385224">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=170385224">08/21/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168779980">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168779980">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168779980">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168779980">07/29/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168802381">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168802381">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168802381">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168802381">07/29/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621777">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621777">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621777">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621777">07/21/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621871">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621871">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621871">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=168621871">07/21/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166408762">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166408762">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166408762">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166408762">06/30/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166432412">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166432412">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166432412">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=166432412">06/30/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427366">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427366">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427366">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427366">06/20/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427461">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427461">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427461">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=164427461">06/20/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163609611">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163609611">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163609611">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163609611">05/31/2016</a></td></tr><tr class="SP_evenRows " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163634397">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163634397">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163634397">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=163634397">05/31/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236184">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236184">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236184">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236184">05/22/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236279">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236279">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236279">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=162236279">05/22/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176770412">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176770412">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176770412">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176770412">04/29/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775611">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775611">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775611">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775611">04/29/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497264">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497264">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497264">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497264">04/20/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497359">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497359">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497359">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160497359">04/20/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176769926">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176769926">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176769926">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176769926">03/31/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775713">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775713">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775713">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=176775713">03/31/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460435">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460435">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460435">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460435">03/21/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460530">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460530">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460530">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157460530">03/21/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157716905">XXXXXX1291</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157716905">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157716905">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157716905">02/29/2016</a></td></tr><tr class="SP_evenRows " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157726108">XXXXXX5649</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157726108">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157726108">Centrue Account Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157726108">02/29/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879661">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879661">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879661">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879661">02/21/2016</a></td></tr><tr class="SP_evenRows bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879756">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879756">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879756">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159879756">02/21/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159925630">N/A</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159925630">ROSEWOOD RENTALS LLC</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159925630">Centrue Notices - NOTICE OF EMAIL ADDRESS CHANGE</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=159925630">02/12/2016</a></td></tr><tr class="SP_evenRows " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077036">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077036">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077036">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077036">01/21/2016</a></td></tr><tr class=" bold" ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077132">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077132">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077132">Centrue Mortgage Loan Statements</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=160077132">01/21/2016</a></td></tr><tr class="SP_evenRows " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490056">XXXXX7511</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490056">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490056">Centrue Tax Form 1098</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490056">01/01/2016</a></td></tr><tr class=" " ><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490057">XXXXX7632</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490057">AJITH ANTONY</a></td><td class="ResultsTd" align="center"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490057">Centrue Tax Form 1098</a></td><td class="ResultsTd" align="left"><a href="../../rpweb.dll/statement?SID=[3384-2FAB3F6-0B8325]&STMID=157490057">01/01/2016</a></td></tr>
+		</table>
+	</form>
+
+	<br><br>
+	<table width="100%">
+		<tr>
+			<td align="center"><a href="../../forms/centrue/historical.aspx?SID=[3384-2FAB3F6-0B8325]&fileid=list">View Historical Statements</a></td>
+		</tr>
+	</table>
+
+
+
+	</div>
+	<!-- /end #content -->
+
+	</div>
+	<!-- /end #content-wrap -->
+
+	<!-- start #footer-wrap -->
+	<div id="footer-wrap">
+	 <!-- start #footer -->
+		<div id="footer">
+			<table class="footer-logos">
+				<tr>
+					<td class="pad-left stack"><p>&#169; 2014. Centrue Bank. All Rights Reserved. <br>Read Our <a href="https://www.centrue.com/business-banking/privacy-policy" target="_blank">Privacy Policy</a>. <a href="https://www.centrue.com/business-banking/terms-and-conditions/" target="_blank">Terms and Conditions</a></p></td>
+					<td class="stack">
+						<a href="http://www.lk-cs.com/">
+							<img class="PoweredByLKCS" src="/images/centrue/Powered_By_LKCS.png">
+						</a>
+					</td>
+					<td class="stack"><img src="/images/centrue/fdic-ehl.png"></td>
+				</tr>
+			</table>
+		</div>
+		<!-- /end #footer -->
+	</div>
+	<!-- /end #footer-wrap -->
+
+</div>
+<!-- /end #page-wrap -->
+<script type="text/javascript" src="../../css/centrue/jquery.meanmenu.js"></script>
+<script type="text/javascript" src="../../css/centrue/script.js"></script>
+</body>
+</html>
+
+
+
+
+
